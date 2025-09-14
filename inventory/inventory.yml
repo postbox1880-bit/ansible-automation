@@ -1,0 +1,82 @@
+all:
+  children:
+    pfsense:
+      hosts:
+        pfsense-CE-1:
+          ansible_host: 192.168.10.80
+          ansible_user: admin
+          # we'll use ssh for shell checks; API tasks will use uri module in playbooks
+          ansible_connection: ssh
+          ansible_network_os: builtin_shell
+    routers:
+      children:
+        edge:
+          hosts:
+            r-edge-3725:
+              ansible_host: 10.10.1.2
+              ansible_user: admin
+              ansible_connection: network_cli
+              ansible_network_os: cisco.ios
+        core:
+          hosts:
+            r-core-7200:
+              ansible_host: 10.20.0.2
+              ansible_user: admin
+              ansible_connection: network_cli
+              ansible_network_os: cisco.ios
+        dist:
+          hosts:
+            r-dist-l3:
+              ansible_host: 10.99.0.2
+              ansible_user: admin
+              ansible_connection: network_cli
+              ansible_network_os: cisco.ios
+    dist_switches:
+      hosts:
+        dist-sw-a:
+          ansible_host: 10.40.0.2    # adjust if different
+          ansible_user: admin
+          ansible_connection: network_cli
+          ansible_network_os: cisco.ios
+        dist-sw-b:
+          ansible_host: 10.50.0.2    # adjust if different
+          ansible_user: admin
+          ansible_connection: network_cli
+          ansible_network_os: cisco.ios
+    access_switches:
+      hosts:
+        acc-sw1:
+          ansible_host: 10.40.0.11
+          ansible_user: admin
+          ansible_connection: network_cli
+          ansible_network_os: cisco.ios
+        acc-sw2:
+          ansible_host: 10.40.0.12
+          ansible_user: admin
+          ansible_connection: network_cli
+          ansible_network_os: cisco.ios
+        acc-sw3:
+          ansible_host: 10.50.0.11
+          ansible_user: admin
+          ansible_connection: network_cli
+          ansible_network_os: cisco.ios
+        acc-sw4:
+          ansible_host: 10.50.0.12
+          ansible_user: admin
+          ansible_connection: network_cli
+          ansible_network_os: cisco.ios
+    servers:
+      hosts:
+        web-server:
+          ansible_host: 10.50.0.20
+          ansible_user: ubuntu
+          ansible_connection: ssh
+          ansible_ssh_private_key_file: ~/.ssh/id_rsa
+        db-server:
+          ansible_host: 10.50.0.30
+          ansible_user: ubuntu
+          ansible_connection: ssh
+        mon-server:
+          ansible_host: 10.50.0.40
+          ansible_user: ubuntu
+          ansible_connection: ssh
