@@ -1,0 +1,13 @@
+- name: Configure VLANs on Cisco switch
+  cisco.ios.ios_config:
+    lines: "{{ vlan_commands }}"
+  vars:
+    vlan_commands:
+      - vlan 10
+      - name SALES
+      - vlan 20
+      - name ENG
+      - vlan 30
+      - name ADMIN
+      - vlan 100
+      - name SERVERS

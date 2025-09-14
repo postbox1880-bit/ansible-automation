@@ -1,0 +1,7 @@
+---
+- name: Configure VLANs & ports on distribution + access switches
+  hosts: dist_switches:access_switches
+  gather_facts: no
+  connection: network_cli
+  roles:
+    - switches

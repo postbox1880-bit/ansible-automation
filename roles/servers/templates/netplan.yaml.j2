@@ -1,0 +1,8 @@
+network:
+  version: 2
+  ethernets:
+    {{ iface_name }}:
+      addresses: [ "{{ ip_address }}/24" ]
+      gateway4: {{ gateway }}
+      nameservers:
+        addresses: [8.8.8.8,8.8.4.4]

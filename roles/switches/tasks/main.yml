@@ -1,2 +1,58 @@
 ---
-# tasks file for roles/switches
+# idempotent vlan + interface assignment for Cisco IOS switches
+
+- name: Ensure VLANs exist
+  cisco.ios.ios_config:
+    lines:
+      - vlan 10
+      - name SALES
+      - vlan 20
+      - name ENG
+      - vlan 30
+      - name ADMIN
+      - vlan 40
+      - name EXTRA
+      - vlan 100
+      - name SERVERS
+
+- name: Configure trunk uplink (Gi0/0) - allow needed VLANs
+  cisco.ios.ios_config:
+    lines:
+      - interface GigabitEthernet0/0
+      - switchport trunk encapsulation dot1q
+      - switchport mode trunk
+      - switchport trunk allowed vlan 10,20,30,40,100
+      - no shutdown
+
+# Example access ports. Adjust interface names per device if needed.
+- name: Configure access ports (Sales) - Gi0/1
+  cisco.ios.ios_config:
+    lines:
+      - interface GigabitEthernet0/1
+      - switchport mode access
+      - switchport access vlan 10
+      - no shutdown
+
+- name: Configure access ports (Eng) - Gi0/2
+  cisco.ios.ios_config:
+    lines:
+      - interface GigabitEthernet0/2
+      - switchport mode access
+      - switchport access vlan 20
+      - no shutdown
+
+- name: Configure access ports (Admin) - Gi0/3
+  cisco.ios.ios_config:
+    lines:
+      - interface GigabitEthernet0/3
+      - switchport mode access
+      - switchport access vlan 30
+      - no shutdown
+
+- name: Configure access ports (Servers) - Gi0/4
+  cisco.ios.ios_config:
+    lines:
+      - interface GigabitEthernet0/4
+      - switchport mode access
+      - switchport access vlan 100
+      - no shutdown
