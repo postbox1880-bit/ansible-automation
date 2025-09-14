@@ -1,0 +1,16 @@
+- name: Configure ASA firewall ACLs and NAT
+  hosts: asa-fw
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Add ACL to permit Sales to webservers
+      cisco.asa.asa_config:
+        lines:
+          - access-list OUTSIDE_TO_DMZ extended permit tcp 10.10.10.0 255.255.255.0 host 192.168.100.10 eq 80
+          - access-list OUTSIDE_TO_DMZ extended permit tcp 10.10.20.0 255.255.255.0 host 192.168.100.10 eq 80
+    - name: Apply ACL to interface
+      cisco.asa.asa_config:
+        lines:
+          - access-group OUTSIDE_TO_DMZ in interface outside
+

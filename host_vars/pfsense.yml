@@ -1,0 +1,6 @@
+# host_vars/pfsense.yml
+ansible_connection: ssh
+ansible_user: admin
+ansible_password: pfsense                # replace with actual password or use vault
+ansible_ssh_common_args: '-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedKeyTypes=+ssh-rsa -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no'
+ansible_python_interpreter: /usr/bin/python3

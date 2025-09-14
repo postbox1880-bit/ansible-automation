@@ -1,0 +1,2 @@
+ansible_network_os: cisco.ios
+ntp_server: 10.10.10.10

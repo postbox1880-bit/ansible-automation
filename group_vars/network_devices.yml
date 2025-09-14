@@ -1,0 +1,7 @@
+# group_vars/network_devices.yml
+ansible_connection: network_cli
+ansible_become: yes
+ansible_become_method: enable
+
+# Optional: speed up connection (SSH only) and disable strict checking in ephemeral labs
+ansible_ssh_common_args: '-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'

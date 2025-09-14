@@ -1,0 +1,14 @@
+- name: Configure OSPF between routers & L3 switches
+  hosts: routers:dist:core
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Configure OSPF process
+      ios_config:
+        lines:
+          - router ospf 1
+          - router-id 1.1.1.1
+          - network 10.10.10.0 0.0.0.255 area 0
+          - network 10.10.20.0 0.0.0.255 area 0
+      when: ansible_network_os == 'cisco.ios'

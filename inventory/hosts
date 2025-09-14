@@ -1,0 +1,26 @@
+# inventory/hosts
+
+[core]
+r-core ansible_host=10.0.0.1 ansible_network_os=cisco.ios
+
+[dist]
+dist-a ansible_host=10.0.0.11 ansible_network_os=cisco.ios
+dist-b ansible_host=10.0.0.12 ansible_network_os=cisco.ios
+
+[access]
+acc-sw1 ansible_host=10.0.0.21 ansible_network_os=cisco.ios
+acc-sw2 ansible_host=10.0.0.22 ansible_network_os=cisco.ios
+acc-sw3 ansible_host=10.0.0.23 ansible_network_os=cisco.ios
+acc-sw4 ansible_host=10.0.0.24 ansible_network_os=cisco.ios
+
+[routers:children]
+core
+dist
+
+[firewalls]
+pfsense ansible_host=192.168.10.80
+
+[all:vars]
+# Keep global username here if most devices use the same creds
+ansible_user=admin
+

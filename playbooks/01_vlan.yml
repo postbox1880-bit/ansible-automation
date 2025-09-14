@@ -1,0 +1,37 @@
+- name: Configure VLANs and access ports on IOS devices
+  hosts: access:dist:core
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Configure VLAN database and SVIs (on L3 where applicable)
+      ios_config:
+        lines:
+          - vlan 10
+          - name Sales
+          - vlan 20
+          - name Eng
+          - vlan 30
+          - name Admin
+          - vlan 40
+          - name Extra
+      when: ansible_network_os == 'cisco.ios'
+
+    - name: Configure SVI on distribution switches (example for dist-a)
+      ios_config:
+        host: "{{ inventory_hostname }}"
+        lines:
+          - interface Vlan10
+          - description Sales SVI
+          - ip address 10.10.10.1 255.255.255.0
+          - no shutdown
+          - interface Vlan20
+          - ip address 10.10.20.1 255.255.255.0
+      when: "'dist' in group_names"
+
+    - name: Configure access ports (example)
+      ios_config:
+        lines:
+          - interface FasttEthernet0/1
+          - switchport mode access
+          - switchport access vlan 10

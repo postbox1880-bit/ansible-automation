@@ -1,0 +1,51 @@
+- name: pfSense - allow management from mgmt net (temporary anchor)
+  hosts: pfsense
+  gather_facts: no
+  vars:
+    mgmt_net: "192.168.10.0/24"
+    wan_if: "em0"
+    anchor_name: "ansible_mgmt"
+  tasks:
+
+    - name: Backup current pf rules to /tmp/pf_rules_backup.txt
+      ansible.builtin.shell: pfctl -sr > /tmp/pf_rules_backup.txt && echo "BACKUP_OK"
+      become: yes
+      ignore_errors: yes
+
+    - name: Show current rules (sanity)
+      ansible.builtin.shell: pfctl -sr | sed -n '1,20p'
+      register: current_rules
+    - name: Display current rules snippet
+      ansible.builtin.debug:
+        var: current_rules.stdout_lines
+
+    - name: Add anchored rule to allow SSH & ICMP from mgmt net on WAN
+      ansible.builtin.shell: |
+        cat <<'EOF' > /tmp/ansible_wan_anchor.conf
+        anchor "{{ anchor_name }}" {
+          pass in quick on {{ wan_if }} inet proto tcp from {{ mgmt_net }} to 192.168.10.80 port 22
+          pass in quick on {{ wan_if }} inet proto icmp from {{ mgmt_net }} to 192.168.10.80
+        }
+        EOF
+        sudo pfctl -a {{ anchor_name }} -f /tmp/ansible_wan_anchor.conf
+        sudo pfctl -sA    # list anchors
+      become: yes
+      register: add_anchor
+      changed_when: "'error' not in add_anchor.stderr.lower()"
+
+    - name: Verify anchored rules applied (search for anchor name)
+      ansible.builtin.shell: pfctl -sA | sed -n '1,200p'
+      register: anchors
+      changed_when: false
+
+    - name: Show anchor name presence
+      ansible.builtin.debug:
+        var: anchors.stdout_lines
+
+    - name: Ping from pfSense to a management host (sanity)
+      ansible.builtin.shell: ping -c 3 192.168.10.10
+      register: ping_mgmt
+      changed_when: false
+    - name: show ping result
+      ansible.builtin.debug:
+        var: ping_mgmt.stdout_lines
