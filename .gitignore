@@ -1,0 +1,13 @@
+
+# Python cache
+__pycache__/
+
+# Ansible retry files
+*.retry
+
+# Vault password files
+*.vault_pass.txt
+
+# OS stuff
+.DS_Store
+
